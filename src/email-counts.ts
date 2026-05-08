@@ -55,12 +55,10 @@ async function getUnreadCount(auth: any): Promise<number> {
   
   const result = await gmail.users.messages.list({
     userId: "me",
-    q: "is:unread",
-    maxResults: 1,
+    q: "is:unread in:inbox",
+    maxResults: 100,
   });
   
-  // Estimate: if we got results but limited to 1, there might be more
-  // But Gmail doesn't tell us total count directly, so we check if there's a nextPageToken
   const total = result.data.resultSizeEstimate || 0;
   return total;
 }
