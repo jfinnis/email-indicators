@@ -1,15 +1,17 @@
 // Get auth URL
 import { google } from "googleapis";
+import { readFileSync } from "fs";
+import { join } from "path";
+
+const OAUTH_CREDS_PATH = join(process.cwd(), "gmail-oauth.json");
 
 function getClientId(): string {
-  const id = process.env.GMAIL_CLIENT_ID;
-  if (!id) throw new Error("GMAIL_CLIENT_ID not set");
-  return id;
+  const creds = JSON.parse(readFileSync(OAUTH_CREDS_PATH, "utf-8"));
+  return creds.installed.client_id;
 }
 function getClientSecret(): string {
-  const secret = process.env.GMAIL_CLIENT_SECRET;
-  if (!secret) throw new Error("GMAIL_CLIENT_SECRET not set");
-  return secret;
+  const creds = JSON.parse(readFileSync(OAUTH_CREDS_PATH, "utf-8"));
+  return creds.installed.client_secret;
 }
 
 const clientId = getClientId();

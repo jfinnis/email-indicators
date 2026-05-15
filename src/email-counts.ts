@@ -8,19 +8,18 @@ const CONFIG_DIR = join(homedir(), ".config", "email-indicators");
 const TOKEN_PATH = join(CONFIG_DIR, "token.json");
 const CACHE_DIR = join(homedir(), ".cache", "email-indicators");
 const CACHE_PATH = join(CACHE_DIR, "counts.json");
+const OAUTH_CREDS_PATH = join(process.cwd(), "gmail-oauth.json");
 
 // Config
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 function getClientId(): string {
-  const id = process.env.GMAIL_CLIENT_ID;
-  if (!id) throw new Error("GMAIL_CLIENT_ID not set");
-  return id;
+  const creds = JSON.parse(readFileSync(OAUTH_CREDS_PATH, "utf-8"));
+  return creds.installed.client_id;
 }
 function getClientSecret(): string {
-  const secret = process.env.GMAIL_CLIENT_SECRET;
-  if (!secret) throw new Error("GMAIL_CLIENT_SECRET not set");
-  return secret;
+  const creds = JSON.parse(readFileSync(OAUTH_CREDS_PATH, "utf-8"));
+  return creds.installed.client_secret;
 }
 
 interface CacheData {
@@ -75,7 +74,7 @@ async function run() {
   const token = loadToken();
   const clientId = getClientId();
   const clientSecret = getClientSecret();
-  
+
   const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, "http://localhost");
   oauth2Client.credentials = token;
 

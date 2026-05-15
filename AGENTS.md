@@ -2,11 +2,13 @@
 
 ## Project Overview
 
-This project provides **Gmail unread email count display for tmux status bars**. The ultimate goal is seamless integration with tmux status bar plugins (specifically tmux-powerline) to show unread email counts.
+This project provides **Gmail unread email count display for tmux status bars**. The ultimate goal is seamless
+integration with tmux status bar plugins (specifically tmux-powerline) to show unread email counts.
 
 ## Core Purpose
 
-Fetch unread Gmail count and output it in a format suitable for tmux status bar display. The output should be minimal and clean:
+Fetch unread Gmail count and output it in a format suitable for tmux status bar display. The output should be minimal
+and clean:
 - Outputs plain number to stdout (e.g., `3` for 3 unread emails)
 - Shell wrapper (`segments/mailcount_gmail.sh`) formats for tmux: `✉ 3`
 - Silent output when no unread emails (clean status bar)
@@ -31,11 +33,11 @@ The project integrates with tmux status bars via:
 
 1. **Direct output**: `bun run start` outputs unread count as plain number
 2. **Shell wrapper**: `segments/mailcount_gmail.sh` formats output for tmux-powerline
-3. **Cache**: Results cached for 5 minutes at `~/.cache/email-indicators/counts.json`
+3. **Cache**: Results cached for 2 minutes at `~/.cache/email-indicators/counts.json`
 
 ### Important for tmux plugin compatibility:
 - Keep output minimal and parseable
-- Respect the 5-minute cache to avoid API rate limits
+- Respect the 2-minute cache to avoid API rate limits
 - Shell scripts should use portable paths (avoid hardcoded `/Users/finnisj/...`)
 - Exit cleanly with no stderr noise (tmux captures both stdout and stderr)
 
@@ -43,10 +45,9 @@ The project integrates with tmux status bars via:
 
 | Location | Purpose |
 |----------|---------|
-| `~/.config/email-indicators/token.json` | OAuth refresh token (gitignored) |
+| `~/.config/email-indicators/token.json` | OAuth refresh token              |
 | `~/.cache/email-indicators/counts.json` | Cached counts |
 | `gmail-oauth.json` | OAuth credentials (gitignored) |
-| Environment variables | `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET` |
 
 ## Gmail API Setup
 

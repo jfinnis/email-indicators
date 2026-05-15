@@ -27,6 +27,8 @@ EORC
 }
 
 run_segment() {
+	echo "DEBUG: mailcount_gmail.sh run_segment called at $(date)" >&2
+	echo "DEBUG: USER_SEGMENTS='$TMUX_POWERLINE_DIR_USER_SEGMENTS'" >&2
 	__process_settings
 
 	local project_dir="$TMUX_POWERLINE_SEG_MAILCOUNT_PROJECT_DIR"
@@ -60,11 +62,9 @@ run_segment() {
 		fi
 	fi
 
-	if [ "$((current_time - last_update))" -gt "$((TMUX_POWERLINE_SEG_MAILCOUNT_GMAIL_INTERVAL * 60))" ] || [ ! -f "$cache_file" ]; then
-		# Try to refresh cache
-		$bun_cmd run "$project_dir/src/email-counts.ts" >/dev/null 2>&1
-		# If bun failed but cache exists, that's okay - use stale cache
-		# If bun failed and no cache, fall through to error handling below
+	local interval_sec=$((TMUX_POWERLINE_SEG_MAILCOUNT_GMAIL_INTERVAL * 60))
+	if [ "$((current_time - last_update))" -gt "$interval_sec" ] || [ ! -f "$cache_file" ]; then
+		$bun_cmd run "$project_dir/src/email-counts.ts" #>/dev/null 2>&1
 	fi
 
 	local count

@@ -1,21 +1,20 @@
 // Complete OAuth flow - exchange code for token
 import { google } from "googleapis";
-import { writeFileSync, mkdirSync } from "fs";
+import { writeFileSync, mkdirSync, readFileSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
 
 const CONFIG_DIR = join(homedir(), ".config", "email-indicators");
 const TOKEN_PATH = join(CONFIG_DIR, "token.json");
+const OAUTH_CREDS_PATH = join(process.cwd(), "gmail-oauth.json");
 
 function getClientId(): string {
-  const id = process.env.GMAIL_CLIENT_ID;
-  if (!id) throw new Error("GMAIL_CLIENT_ID not set");
-  return id;
+  const creds = JSON.parse(readFileSync(OAUTH_CREDS_PATH, "utf-8"));
+  return creds.installed.client_id;
 }
 function getClientSecret(): string {
-  const secret = process.env.GMAIL_CLIENT_SECRET;
-  if (!secret) throw new Error("GMAIL_CLIENT_SECRET not set");
-  return secret;
+  const creds = JSON.parse(readFileSync(OAUTH_CREDS_PATH, "utf-8"));
+  return creds.installed.client_secret;
 }
 
 async function run() {

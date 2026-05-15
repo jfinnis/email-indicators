@@ -1,0 +1,84 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.3.15/schema.json",
+    "assist": {
+        "actions": {
+            "source": {
+                "organizeImports": "on"
+            }
+        }
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+            "nursery": {
+                "noNestedPromises": "error",
+                "noUselessReturn": "error",
+                "useGlobalThis": "warn",
+                "noRedundantDefaultExport": "error",
+                "noHexColors": "warn",
+                "useConsistentMethodSignatures": "info",
+                "noDuplicateAttributes": "error",
+                "noMultiAssign": "error",
+                "noJsxPropsBind": "warn",
+                "noReturnAssign": "error",
+                "noScriptUrl": "error",
+                "useAwaitThenable": "warn",
+                "noLeakedRender": "warn",
+                "noDuplicatedSpreadProps": "error",
+                "noMultiStr": "warn",
+                "noEqualsToNull": "error",
+                "noProto": "error",
+                "noForIn": "warn",
+                "noSyncScripts": "warn",
+                "useSpread": "error",
+                "noReactForwardRef": "error",
+                "noUnusedExpressions": "warn",
+                "noDuplicateDependencies": "error"
+            },
+            "security": {
+                "noSecrets": "warn"
+            },
+            "style": {
+                "noCommonJs": "warn",
+                "noEnum": "warn",
+                "useConsistentArrayType": {
+                    "level": "info",
+                    "options": {
+                        "syntax": "shorthand"
+                    }
+                },
+                "useForOf": "info",
+                "useReactFunctionComponents": "error",
+                "useTrimStartEnd": "error"
+            },
+            "suspicious": {
+                "noFocusedTests": "warn",
+                "noSkippedTests": "warn",
+                "noUnassignedVariables": "error",
+                "useAwait": "warn"
+            }
+        }
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 100,
+        "formatWithErrors": true
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "jsxQuoteStyle": "double",
+            "semicolons": "asNeeded",
+            "trailingCommas": "es5",
+            "arrowParentheses": "asNeeded"
+        }
+    },
+    "css": {
+        "formatter": {
+            "enabled": true
+        }
+    }
+}
