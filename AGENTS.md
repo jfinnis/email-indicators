@@ -66,6 +66,11 @@ Required scopes: `https://www.googleapis.com/auth/gmail.readonly`
 - Keep tmux integration as the primary output target
 - Shell scripts in `segments/` directory
 
+## Linting & Typechecking
+
+- `bun run lint` - Run Biome and automatically fix style issues
+- `bun run typecheck` - Run tsgo to typecheck the codebase
+
 ## Version Control
 
 - Use **Jujutsu (jj)** for version control, not git

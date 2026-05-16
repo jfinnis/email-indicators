@@ -4,7 +4,9 @@
   "description": "Email unread count indicators for tmux",
   "type": "module",
   "scripts": {
-    "start": "bun run src/email-counts.ts"
+    "start": "bun run src/email-counts.ts",
+    "lint": "biome check --write src/",
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "googleapis": "^144.0.0"
