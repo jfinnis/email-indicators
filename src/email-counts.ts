@@ -2,14 +2,18 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { google } from 'googleapis'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 const CONFIG_DIR = join(homedir(), '.config', 'email-indicators')
 const TOKEN_PATH = join(CONFIG_DIR, 'token.json')
 const CACHE_DIR = join(homedir(), '.cache', 'email-indicators')
 const CACHE_PATH = join(CACHE_DIR, 'counts.json')
-const OAUTH_CREDS_PATH = join(process.cwd(), 'gmail-oauth.json')
+const OAUTH_CREDS_PATH = join(__dirname, '..', 'gmail-oauth.json')
 
 // Config
 const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes
@@ -25,7 +29,8 @@ function getClientSecret(): string {
 
 interface CacheData {
     timestamp: number
-    count: number
+    inbox: number
+    'bb-email': number
 }
 
 interface TokenData {
@@ -52,9 +57,9 @@ function loadCache(): CacheData | null {
     }
 }
 
-function saveCache(count: number): void {
+function saveCache(inbox: number, bbLabel: number): void {
     mkdirSync(CACHE_DIR, { recursive: true })
-    const data: CacheData = { timestamp: Date.now(), count }
+    const data: CacheData = { timestamp: Date.now(), inbox, 'bb-email': bbLabel }
     writeFileSync(CACHE_PATH, JSON.stringify(data))
 }
 
@@ -71,11 +76,27 @@ async function getUnreadCount(auth: InstanceType<typeof google.auth.OAuth2>): Pr
     return total
 }
 
+async function getLabelCount(
+    auth: InstanceType<typeof google.auth.OAuth2>,
+    labelName: string
+): Promise<number> {
+    const gmail = google.gmail({ version: 'v1', auth })
+
+    const result = await gmail.users.messages.list({
+        userId: 'me',
+        q: `is:unread label:${labelName}`,
+        maxResults: 100,
+    })
+
+    const total = result.data.resultSizeEstimate || 0
+    return total
+}
+
 async function run() {
     // Check cache first
     const cached = loadCache()
     if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
-        console.log(cached.count)
+        console.log(`${cached.inbox} ${cached['bb-email']}`)
         return
     }
 
@@ -87,13 +108,14 @@ async function run() {
     const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, 'http://localhost')
     oauth2Client.credentials = token
 
-    // Fetch count
-    const count = await getUnreadCount(oauth2Client)
+    // Fetch both counts
+    const inbox = await getUnreadCount(oauth2Client)
+    const bbLabel = await getLabelCount(oauth2Client, 'bb-email')
 
     // Save cache
-    saveCache(count)
+    saveCache(inbox, bbLabel)
 
-    console.log(count)
+    console.log(`${inbox} ${bbLabel}`)
 }
 
 run().catch(err => {

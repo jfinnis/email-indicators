@@ -67,16 +67,15 @@ run_segment() {
 		$bun_cmd run "$project_dir/src/email-counts.ts" #>/dev/null 2>&1
 	fi
 
-	local count
-	count=$(cat "$cache_file" 2>/dev/null | grep -oE '"count":[0-9]+' | cut -d: -f2)
+	local inbox bb_label
+	inbox=$(cat "$cache_file" 2>/dev/null | grep -oE '"inbox":[0-9]+' | cut -d: -f2)
+	bb_label=$(cat "$cache_file" 2>/dev/null | grep -oE '"bb-email":[0-9]+' | cut -d: -f2)
 
-	if [ -z "$count" ]; then
+	if [ -z "$inbox" ] || [ -z "$bb_label" ]; then
 		return 1
 	fi
 
-	if [ "$count" -gt 0 ] 2>/dev/null; then
-		echo "✉ ${count}"
-	fi
+	echo "✉ ${inbox} ✉ ${bb_label}"
 
 	return 0
 }
