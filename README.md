@@ -1,6 +1,7 @@
 # Email Indicators
 
-Gmail unread count indicators for tmux status bar.
+Gmail unread count indicators to display in the tmux status bar. Caches values in json to be read
+in as a tmux-powerline segment.
 
 ## Setup
 
@@ -13,7 +14,7 @@ Gmail unread count indicators for tmux status bar.
    ```bash
    bun run src/auth-url.ts & bun run src/auth-complete.ts
    ```
-   This opens a browser for you to consent. The refresh token is saved to `~/.config/email-indicators/`.
+   This opens a browser for you to consent. The token is saved to `~/.config/email-indicators/`.
 
 3. **Configure tmux-powerline:**
    - Add the `mailcount_gmail` segment to your theme
@@ -22,4 +23,4 @@ Gmail unread count indicators for tmux status bar.
 ```bash
 bun run src/email-counts.ts
 ```
-Outputs: `personal:3` (unread count) or empty if no unread mail.
+Outputs personal unread inbox count along with a custom label unread count.

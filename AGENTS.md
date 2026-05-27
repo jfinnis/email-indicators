@@ -38,7 +38,7 @@ The project integrates with tmux status bars via:
 ### Important for tmux plugin compatibility:
 - Keep output minimal and parseable
 - Respect the 2-minute cache to avoid API rate limits
-- Shell scripts should use portable paths (avoid hardcoded `/Users/finnisj/...`)
+- Shell scripts should use portable paths (avoid hardcoded usernames in directories)
 - Exit cleanly with no stderr noise (tmux captures both stdout and stderr)
 
 ## Configuration
