@@ -75,7 +75,11 @@ run_segment() {
 		return 1
 	fi
 
-	echo "📬${inbox} 💼${bb_label}"
+	if [ "$bb_label" -gt 0 ]; then
+		echo "📬${inbox} 💼${bb_label}"
+	else
+		echo "📬${inbox}"
+	fi
 
 	return 0
 }
