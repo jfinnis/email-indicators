@@ -75,7 +75,7 @@ run_segment() {
 		return 1
 	fi
 
-	echo "✉ ${inbox} ✉ ${bb_label}"
+	echo "📬${inbox} 💼${bb_label}"
 
 	return 0
 }
