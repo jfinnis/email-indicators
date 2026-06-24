@@ -67,19 +67,23 @@ run_segment() {
 		$bun_cmd run "$project_dir/src/email-counts.ts" #>/dev/null 2>&1
 	fi
 
-	local inbox bb_label
+	local inbox bb_label bb_commented
 	inbox=$(cat "$cache_file" 2>/dev/null | grep -oE '"inbox":[0-9]+' | cut -d: -f2)
 	bb_label=$(cat "$cache_file" 2>/dev/null | grep -oE '"bb-email":[0-9]+' | cut -d: -f2)
+	bb_commented=$(cat "$cache_file" 2>/dev/null | grep -oE '"bb-email-commented":[0-9]+' | cut -d: -f2)
 
 	if [ -z "$inbox" ] || [ -z "$bb_label" ]; then
 		return 1
 	fi
 
+	local output="📬${inbox}"
 	if [ "$bb_label" -gt 0 ]; then
-		echo "📬${inbox} 💼${bb_label}"
-	else
-		echo "📬${inbox}"
+		output="${output} 💼${bb_label}"
 	fi
+	if [ "${bb_commented:-0}" -gt 0 ]; then
+		output="${output} 💬${bb_commented}"
+	fi
+	echo "$output"
 
 	return 0
 }

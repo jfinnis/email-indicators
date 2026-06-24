@@ -31,6 +31,7 @@ interface CacheData {
     timestamp: number
     inbox: number
     'bb-email': number
+    'bb-email-commented': number
 }
 
 interface TokenData {
@@ -57,46 +58,37 @@ function loadCache(): CacheData | null {
     }
 }
 
-function saveCache(inbox: number, bbLabel: number): void {
+function saveCache(inbox: number, bbLabel: number, bbCommented: number): void {
     mkdirSync(CACHE_DIR, { recursive: true })
-    const data: CacheData = { timestamp: Date.now(), inbox, 'bb-email': bbLabel }
+    const data: CacheData = {
+        timestamp: Date.now(),
+        inbox,
+        'bb-email': bbLabel,
+        'bb-email-commented': bbCommented,
+    }
     writeFileSync(CACHE_PATH, JSON.stringify(data))
 }
 
-async function getUnreadCount(auth: InstanceType<typeof google.auth.OAuth2>): Promise<number> {
-    const gmail = google.gmail({ version: 'v1', auth })
-
-    const result = await gmail.users.messages.list({
-        userId: 'me',
-        q: 'is:unread in:inbox',
-        maxResults: 100,
-    })
-
-    const total = result.data.resultSizeEstimate || 0
-    return total
-}
-
-async function getLabelCount(
+async function getQueryCount(
     auth: InstanceType<typeof google.auth.OAuth2>,
-    labelName: string
+    query: string
 ): Promise<number> {
     const gmail = google.gmail({ version: 'v1', auth })
 
     const result = await gmail.users.messages.list({
         userId: 'me',
-        q: `is:unread label:${labelName}`,
+        q: query,
         maxResults: 100,
     })
 
-    const total = result.data.resultSizeEstimate || 0
-    return total
+    return result.data.resultSizeEstimate || 0
 }
 
 async function run() {
     // Check cache first
     const cached = loadCache()
     if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
-        console.log(`${cached.inbox} ${cached['bb-email']}`)
+        console.log(`${cached.inbox} ${cached['bb-email']} ${cached['bb-email-commented'] ?? 0}`)
         return
     }
 
@@ -108,14 +100,15 @@ async function run() {
     const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, 'http://localhost')
     oauth2Client.credentials = token
 
-    // Fetch both counts
-    const inbox = await getUnreadCount(oauth2Client)
-    const bbLabel = await getLabelCount(oauth2Client, 'bb-email')
+    // Fetch counts
+    const inbox = await getQueryCount(oauth2Client, 'is:unread in:inbox')
+    const bbLabel = await getQueryCount(oauth2Client, 'is:unread label:bb-email')
+    const bbCommented = await getQueryCount(oauth2Client, 'is:unread label:bb-email "commented on" | "mentioned you"')
 
     // Save cache
-    saveCache(inbox, bbLabel)
+    saveCache(inbox, bbLabel, bbCommented)
 
-    console.log(`${inbox} ${bbLabel}`)
+    console.log(`${inbox} ${bbLabel} ${bbCommented}`)
 }
 
 run().catch(err => {
