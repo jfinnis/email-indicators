@@ -3,6 +3,8 @@
 Gmail unread count indicators to display in the tmux status bar. Caches values in json to be read
 in as a tmux-powerline segment.
 
+![Demo](docs/demo1.png)
+
 ## Setup
 
 1. **Set up Gmail API credentials:**
